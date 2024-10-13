@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dishwasher Alert</title>
+    <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+    </script>
+
+
+</head>
+<body>
+<script>
+    (function() {
+        emailjs.init("LLGnh8AMM9-jhcJC0"); // Replace with your EmailJS user ID
+
+        const roommates = [
+            { name: "Uday", email: "tempo.three.003@gmail.com" },
+            { name: "Jaggu", email: "tempo.three.003@gmail.com" },
+            { name: "Kundi", email: "tempo.three.003@gmail.com" },
+            { name: "Hrushik", email: "tempo.three.003@gmail.com" },
+            { name: "Chukki", email: "tempo.three.003@gmail.com" }
+        ];
+
+        const weekdaySchedule = [
+            "Uday",
+            "Jaggu",
+            "Kundi",
+            "Hrushik",
+            "Chukki"
+        ];
+
+        let weekendIndex = 0;
+
+        function getDishwasher(date) {
+            const day = date.getDay();
+            if (day >= 1 && day <= 5) {
+                return weekdaySchedule[day - 1];
+            } else {
+                const roommate = roommates[weekendIndex % roommates.length];
+                weekendIndex++;
+                return roommate.name;
+            }
+        }
+
+        function sendEmail(recipient, date) {
+            const templateParams = {
+                to_name: recipient,
+                date: date.toDateString(),
+                to_email: roommates.find(r => r.name === recipient).email
+            };
+
+            emailjs.send('service_2xmdk0t', 'template_bmfpsjo', templateParams)
+                .then((response) => {
+                    console.log('Email sent successfully:', response.status, response.text);
+                }, (error) => {
+                    console.log('Failed to send email:', error);
+                });
+        }
+
+        function sendDailyAlert() {
+            const today = new Date();
+            const dishwasher = getDishwasher(today);
+            sendEmail(dishwasher, today);
+        }
+
+        // Run the alert system
+        sendDailyAlert();
+    })();
+</script>
+</body>
+</html>
